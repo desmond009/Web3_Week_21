@@ -1,4 +1,4 @@
-import { useAccount, useConnect, useConnectors, useDisconnect, WagmiProvider } from 'wagmi'
+import { useAccount, useConnect, useConnectors, useDisconnect, useReadContract, WagmiProvider } from 'wagmi'
 import { config } from './config/config.js'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import './App.css'
@@ -11,10 +11,43 @@ function App() {
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
         <ConnectWallet />
+        <TotalSupply />
       </QueryClientProvider>
     </WagmiProvider>
   )
 }
+
+function TotalSupply() {
+  const { data, isLoading, error } = useReadContract({
+    address: '0xdac17f958d2ee523a2206206994597c13d831ec7',
+    abi: [
+        {
+        "constant": true,
+        "inputs": [],
+        "name": "totalSupply",
+        "outputs": [
+            {
+            "name": "",
+            "type": "uint256"
+            }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+        }
+    ],
+    functionName: 'totalSupply',
+  })
+
+  return (
+    <div>
+      {isLoading && <p>Loading...</p>}
+      {error && <p>Error: {error.message}</p>}
+      {data && <p>Total Supply: {data?.toString()}</p>}
+    </div>
+  )
+}
+
 
 function ConnectWallet() {
 

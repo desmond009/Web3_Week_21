@@ -14,14 +14,14 @@ async function pollBlock(blockNumber: number) {
 }   
 
 // Create a function that lets the user poll from the genises to the current block
-async function main () {
-    const currentBlock = 1;
-
-    while(1){
-        await pollBlock(currentBlock)
+async function main() {
+    let currentBlock = await provider.getBlockNumber(); // Start from latest
+    
+    while(true) {
+        await pollBlock(currentBlock);
+        currentBlock++; // Move to next block
+        await new Promise(resolve => setTimeout(resolve, 12000)); // Wait ~12s per block
     }
 }
 
-main()
-
-
+main();
